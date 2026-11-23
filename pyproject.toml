@@ -1,0 +1,23 @@
+[project]
+name = "medical-segmentation"
+version = "0.1.0"
+description = "U-Net experiments (from scratch vs. pretrained ResNet encoder) for medical image segmentation"
+readme = "README.md"
+requires-python = ">=3.12, <3.14"
+dependencies = [
+  "numpy",
+  "pandas>=2.0.0",
+  "pillow>=9.5.0",
+  "matplotlib>=3.7.0",
+  "tensorboardx>=2.6.2",
+  "torch>=2.0.0",
+  "torchvision>=0.15.0",
+]
+
+[project.optional-dependencies]
+# pretrained U-Net through segmentation_models_pytorch (falls back to torchvision if absent)
+smp = ["segmentation-models-pytorch>=0.3.3"]
+# SegFormer and SAM zero-shot evaluation (Hugging Face)
+transformers = ["transformers>=4.40.0"]
+# experiment tracking / hyper-parameter sweeps (config.json: "use_wandb": true)
+wandb = ["wandb[sweeps]"]

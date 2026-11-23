@@ -1,0 +1,44 @@
+program: main.py
+method: bayes
+metric:
+  name: val/dice_coeff
+  goal: maximize
+early_terminate:
+  type: hyperband
+  min_iter: 4
+  eta: 3
+
+parameters:
+  # architecture
+  arch.model_type:        {values: [scratch, pretrained, segformer]}
+  arch.backbone:          {values: [resnet34, resnet50]}   # only used by "pretrained"
+  arch.segformer_name:    {values: [nvidia/mit-b0, nvidia/mit-b1, nvidia/mit-b2]}   # only used by "segformer"
+
+  # loss
+  loss:                   {values: [bce_dice, dice, focal, tversky]}
+
+  # optimizer
+  optimizer.lr:           {distribution: log_uniform_values, min: 0.00001, max: 0.001}
+  optimizer.weight_decay: {distribution: log_uniform_values, min: 1e-6, max: 1e-3}
+  optimizer.amsgrad:      {values: [false, true]}
+
+  # data
+  data_loader.batch_size: {values: [4, 8, 16]}
+
+  # schedule: 20 total epochs - 2 warmup epochs
+  lr_scheduler.T_max:     {value: 18}
+  lr_scheduler.eta_min:   {value: 0.000001}
+
+  trainer.epochs:         {value: 20}
+  trainer.warmup_epochs:  {value: 2}
+  trainer.monitor:        {value: "max val_dice_coeff"}
+  trainer.early_stop:     {value: 8}
+
+  use_wandb:              {value: true}
+  n_gpu:                  {value: 1}
+  sweep:                  {value: true}
+
+command:
+  - make
+  - train
+  - ARGS=${args}

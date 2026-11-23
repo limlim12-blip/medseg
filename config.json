@@ -1,0 +1,50 @@
+{
+    "sweep": false,
+    "name": "medseg",
+    "n_gpu": 1,
+    "use_wandb": true,
+    "loss": "bce_dice",
+    "arch": {
+        "model_type": "scratch",
+        "backbone": "resnet34",
+        "pretrained": true,
+        "in_channels": 3,
+        "num_classes": 1,
+        "base_c": 32,
+        "bilinear": false,
+        "segformer_name": "nvidia/mit-b0"
+    },
+    "data_loader": {
+        "data_dir": "data/kvasir-seg",
+        "download": true,
+        "batch_size": 16,
+        "img_size": 384,
+        "validation_split": 0.1,
+        "test_split": 0.1,
+        "num_workers": 2
+    },
+    "optimizer": {
+        "lr": 1e-4,
+        "weight_decay": 1e-4,
+        "amsgrad": false,
+        "fused": false
+    },
+    "lr_scheduler": {
+        "max_lr": 0.002,
+        "pct_start": 0.125,
+        "div_factor": 10.0,
+        "final_div_factor": 100.0
+    },
+    "trainer": {
+        "compile": true,
+        "amp": false,
+        "warmup_epochs": 4,
+        "epochs": 100,
+        "save_dir": "saved/",
+        "save_period": 5,
+        "verbosity": 2,
+        "monitor": "max val_dice_coeff",
+        "early_stop": 20,
+        "tensorboard": true
+    }
+}
